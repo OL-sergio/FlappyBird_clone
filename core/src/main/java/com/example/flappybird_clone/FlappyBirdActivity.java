@@ -12,17 +12,23 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     private int movY = 0;
 
     private SpriteBatch batch;
-    private Texture bird;
+    private Texture[] birds;
     private Texture background;
 
     private float widthDisplay;
     private float heightDisplay;
+    private float wingsVariations = 0.0f;
 
     @Override
     public void create() {
         //Gdx.app.log("", "Jogo iniciado");
         batch = new SpriteBatch();
-        bird = new Texture("passaro1.png");
+
+        birds = new Texture[3];
+        birds[0] = new Texture("passaro1.png");
+        birds[1] = new Texture("passaro2.png");
+        birds[2] = new Texture("passaro3.png");
+
         background = new Texture("fundo.png");
         widthDisplay = Gdx.graphics.getWidth();
         heightDisplay = Gdx.graphics.getHeight();
@@ -39,14 +45,20 @@ public class FlappyBirdActivity extends ApplicationAdapter {
 
         batch.begin();
 
-        batch.draw(background, 0, 0,   widthDisplay, heightDisplay);
-        batch.draw(bird, movX,600);
+        if (wingsVariations > 3)
+            wingsVariations = 0;
 
-        movY++;
-        movX++;
+            batch.draw(background, 0, 0, widthDisplay, heightDisplay);
+            batch.draw(birds[ (int) wingsVariations],30, heightDisplay/2);
+
+            float flappingWingSpeed = Gdx.graphics.getDeltaTime() * 7;
+
+            wingsVariations += flappingWingSpeed;
+            //Gdx.app.log("variations", "variation: " +  );
+            movY++;
+            movX++;
 
         batch.end();
-
     }
 
     @Override
