@@ -2,7 +2,7 @@ package com.example.flappybird_clone.android;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.PixelCopy;
+
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
