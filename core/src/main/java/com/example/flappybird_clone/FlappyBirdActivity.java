@@ -18,6 +18,9 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     private float widthDisplay;
     private float heightDisplay;
     private float wingsVariations = 0.0f;
+    private float gravity = 2.0f;
+    private float birdInitialVerticalPosition = 0.0f;
+
 
     @Override
     public void create() {
@@ -32,6 +35,7 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         background = new Texture("fundo.png");
         widthDisplay = Gdx.graphics.getWidth();
         heightDisplay = Gdx.graphics.getHeight();
+        birdInitialVerticalPosition = heightDisplay / 2;
 
     }
 
@@ -45,16 +49,28 @@ public class FlappyBirdActivity extends ApplicationAdapter {
 
         batch.begin();
 
-        if (wingsVariations > 3)
+        if (wingsVariations > 3){
             wingsVariations = 0;
+        }
 
-            batch.draw(background, 0, 0, widthDisplay, heightDisplay);
-            batch.draw(birds[ (int) wingsVariations],30, heightDisplay/2);
+        boolean touchScreen = Gdx.input.isTouched();
+        if ( touchScreen ) {
+           // Gdx.app.log("touch", "Tela tocada");
+            gravity = -25;
+        }
+            if ( birdInitialVerticalPosition > 0 || touchScreen ) {
+                birdInitialVerticalPosition = birdInitialVerticalPosition - gravity;
+            }
 
-            float flappingWingSpeed = Gdx.graphics.getDeltaTime() * 7;
+            batch.draw( background, 0, 0, widthDisplay, heightDisplay );
+            batch.draw( birds[ (int) wingsVariations], 30, birdInitialVerticalPosition );
+
+            float flappingWingSpeed = Gdx.graphics.getDeltaTime() * 10;
 
             wingsVariations += flappingWingSpeed;
             //Gdx.app.log("variations", "variation: " +  );
+            //gravity++;
+            gravity  += 1.5f;
             movY++;
             movX++;
 
