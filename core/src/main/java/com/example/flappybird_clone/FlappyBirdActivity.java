@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.Random;
 
@@ -21,10 +25,16 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     private Texture pipeTopLongo;
     private Texture pipeBottom;
     private Texture pipeBottomLongo;
+
     private Random random;
     private int score = 0;
+    private BitmapFont textSoreResult;
     private boolean passPipe = false;
 
+    private ShapeRenderer shapeRenderer;
+    private Circle birdCircle;
+    private Rectangle pipeTopRectangle;
+    private Rectangle pipeBottomRectangle;
 
     private float widthDisplay;
     private float heightDisplay;
@@ -34,9 +44,6 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     private float pipePositionHorizontal;
     private float pipePositionVertical ;
     private float pipesMargin;
-
-    private BitmapFont textSoreResult;
-
 
 
     @Override
@@ -70,11 +77,16 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         heightDisplay = Gdx.graphics.getHeight();
         birdInitialVerticalPosition = heightDisplay / 2f;
         pipePositionHorizontal = widthDisplay;
-        pipesMargin = 260f;
+        pipesMargin = 460f;
 
         textSoreResult = new BitmapFont();
         textSoreResult.setColor(Color.WHITE);
         textSoreResult.getData().setScale(6f);
+
+        shapeRenderer = new ShapeRenderer();
+        birdCircle = new Circle();
+        pipeTopRectangle = new Rectangle();
+        pipeBottomRectangle = new Rectangle();
 
     }
 
@@ -83,6 +95,54 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         verifyEstateOfGame();
         scoreValidation();
         drawTexture();
+        birdPipeCollision();
+
+    }
+
+    private void birdPipeCollision() {
+
+        birdCircle.set(50 + birds[0].getWidth() / 2f ,
+            birdInitialVerticalPosition + birds[0].getHeight() / 2f ,birds[0].getWidth() / 2f);
+
+        pipeTopRectangle.set(
+            pipePositionHorizontal, heightDisplay / 2f + pipesMargin / 2f + pipePositionVertical,
+            pipeTop.getWidth(), pipeTop.getHeight()
+        );
+
+        pipeBottomRectangle.set(
+            pipePositionHorizontal,
+            heightDisplay / 2f - pipeBottom.getHeight() - pipesMargin / 2f + pipePositionVertical,
+            pipeBottom.getWidth(), pipeBottom.getHeight()
+        );
+
+        boolean birdCollidedTop = Intersector.overlaps(birdCircle, pipeTopRectangle);
+        boolean birdCollidedBottom = Intersector.overlaps(birdCircle, pipeBottomRectangle);
+
+        if ( birdCollidedTop ||  birdCollidedBottom ) {
+            Gdx.app.log("Colisão", "Passaro colidiu com o cano");
+            //gameOver();
+        }
+
+        // Desenhar o circulo do passaro e os retangulos dos canos
+        /*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);
+
+        shapeRenderer.circle(50 + birds[0].getWidth() / 2f ,
+            birdInitialVerticalPosition + birds[0].getHeight() / 2f ,
+            birds[0].getWidth() / 2f
+        );
+
+        shapeRenderer.rect(
+            pipePositionHorizontal, heightDisplay / 2f + pipesMargin / 2f + pipePositionVertical,
+            pipeTop.getWidth(), pipeTop.getHeight()
+        );
+
+        shapeRenderer.rect(
+            pipePositionHorizontal,
+            heightDisplay / 2f - pipeBottom.getHeight() - pipesMargin / 2f + pipePositionVertical,
+            pipeBottom.getWidth(), pipeBottom.getHeight()
+        );
+        shapeRenderer.end();*/
     }
 
     private void scoreValidation() {
@@ -107,18 +167,15 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         boolean touchScreen = Gdx.input.isTouched();
         if ( touchScreen ) {
             // Gdx.app.log("touch", "Tela tocada");
-            birdGravityJump = -15f;
+            birdGravityJump = -10f;
         }
         if ( birdInitialVerticalPosition > 0 || touchScreen ) {
             birdInitialVerticalPosition = birdInitialVerticalPosition - birdGravityJump;
         }
-
-
         wingsVariations += Gdx.graphics.getDeltaTime() * 10f;
         if ( wingsVariations> 3){
             wingsVariations = 0f;
         }
-
         birdGravityJump++;
     }
 
