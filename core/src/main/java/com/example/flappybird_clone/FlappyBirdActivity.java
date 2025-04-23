@@ -1,16 +1,21 @@
 package com.example.flappybird_clone;
 
+import static com.example.flappybird_clone.Constants.PIPES_MAX_SIZE;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.PrimitiveIterator;
 import java.util.Random;
 
 
@@ -25,11 +30,21 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     private Texture pipeTopLongo;
     private Texture pipeBottom;
     private Texture pipeBottomLongo;
+    private Texture gameOver;
 
     private Random random;
     private int score = 0;
-    private BitmapFont textSoreResult;
+    private int gameStatus = 0;
+    private float birdGravityHorizontal = 0f;
+    private  boolean touchScreen;
     private boolean passPipe = false;
+    private BitmapFont textScoreResult;
+    private BitmapFont textGameOverScoreResult;
+    private BitmapFont textGameRestart;
+    private Sound soundFlying;
+    private Sound soundCollision;
+    private Sound soundPoint;
+
 
     private ShapeRenderer shapeRenderer;
     private Circle birdCircle;
@@ -39,7 +54,7 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     private float widthDisplay;
     private float heightDisplay;
     private float wingsVariations = 0f;
-    private float birdGravityJump = 2f;
+    private float birdGravity = 2f;
     private float birdInitialVerticalPosition;
     private float pipePositionHorizontal;
     private float pipePositionVertical ;
@@ -48,23 +63,25 @@ public class FlappyBirdActivity extends ApplicationAdapter {
 
     @Override
     public void create() {
-        initializeTexture();
+        initializeObjectOnScreen();
         initializeObjects();
     }
 
-    private void initializeTexture() {
+    private void initializeObjectOnScreen() {
 
         birds = new Texture[3];
         birds[0] = new Texture("passaro1.png");
         birds[1] = new Texture("passaro2.png");
         birds[2] = new Texture("passaro3.png");
         background = new Texture("fundo.png");
-
         pipeTop = new Texture("cano_topo.png");
         pipeTopLongo = new Texture("cano_topo_maior.png");
-
         pipeBottom = new Texture("cano_baixo.png");
         pipeBottomLongo = new Texture("cano_baixo_maior.png");
+        gameOver = new Texture("game_over.png");
+        soundFlying = Gdx.audio.newSound(Gdx.files.internal("som_asa.wav"));
+        soundCollision = Gdx.audio.newSound(Gdx.files.internal("som_batida.wav"));
+        soundPoint = Gdx.audio.newSound(Gdx.files.internal("som_pontos.wav"));
 
     }
 
@@ -77,11 +94,19 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         heightDisplay = Gdx.graphics.getHeight();
         birdInitialVerticalPosition = heightDisplay / 2f;
         pipePositionHorizontal = widthDisplay;
-        pipesMargin = 460f;
+        pipesMargin = Constants.PIPES_MARGIN;
 
-        textSoreResult = new BitmapFont();
-        textSoreResult.setColor(Color.WHITE);
-        textSoreResult.getData().setScale(6f);
+        textScoreResult = new BitmapFont();
+        textScoreResult.setColor(Color.WHITE);
+        textScoreResult.getData().setScale(6f);
+
+        textGameRestart = new BitmapFont();
+        textGameRestart.setColor(Color.GREEN);
+        textGameRestart.getData().setScale(3f);
+
+        textGameOverScoreResult = new BitmapFont();
+        textGameOverScoreResult.setColor(Color.RED);
+        textGameOverScoreResult.getData().setScale(3f);
 
         shapeRenderer = new ShapeRenderer();
         birdCircle = new Circle();
@@ -92,6 +117,7 @@ public class FlappyBirdActivity extends ApplicationAdapter {
 
     @Override
     public void render() {
+
         verifyEstateOfGame();
         scoreValidation();
         drawTexture();
@@ -101,7 +127,7 @@ public class FlappyBirdActivity extends ApplicationAdapter {
 
     private void birdPipeCollision() {
 
-        birdCircle.set(50 + birds[0].getWidth() / 2f ,
+        birdCircle.set(Constants.BIRD_START_WIDTH + birds[0].getWidth() / 2f ,
             birdInitialVerticalPosition + birds[0].getHeight() / 2f ,birds[0].getWidth() / 2f);
 
         pipeTopRectangle.set(
@@ -119,8 +145,13 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         boolean birdCollidedBottom = Intersector.overlaps(birdCircle, pipeBottomRectangle);
 
         if ( birdCollidedTop ||  birdCollidedBottom ) {
-            Gdx.app.log("Colisão", "Passaro colidiu com o cano");
-            //gameOver();
+            if( gameStatus == 1 ){
+              // Gdx.app.log("Colisão", "Passaro colidiu com o cano");
+                soundCollision.play();
+                gameStatus = 2;
+
+            }
+
         }
 
         // Desenhar o circulo do passaro e os retangulos dos canos
@@ -145,38 +176,85 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         shapeRenderer.end();*/
     }
 
+
+
     private void scoreValidation() {
 
-        if ( pipePositionHorizontal < 50f - birds[0].getWidth() ) {
+        if ( pipePositionHorizontal < 50 - birds[0].getWidth() ) {
             if ( !passPipe ) {
                 score++;
                 passPipe = true;
+                soundPoint.play();
+
             }
         }
-    }
 
-    private void verifyEstateOfGame() {
-
-        pipePositionHorizontal -= Gdx.graphics.getDeltaTime() * 200f;
-        if ( pipePositionHorizontal < -pipeTop.getWidth() ) {
-            pipePositionHorizontal = widthDisplay;
-            pipePositionVertical = random.nextInt(900 ) - 200f ;
-            passPipe = false;
-        }
-
-        boolean touchScreen = Gdx.input.isTouched();
-        if ( touchScreen ) {
-            // Gdx.app.log("touch", "Tela tocada");
-            birdGravityJump = -10f;
-        }
-        if ( birdInitialVerticalPosition > 0 || touchScreen ) {
-            birdInitialVerticalPosition = birdInitialVerticalPosition - birdGravityJump;
-        }
-        wingsVariations += Gdx.graphics.getDeltaTime() * 10f;
+        wingsVariations += Gdx.graphics.getDeltaTime() * Constants.BIRD_WINGS_SPEED;
         if ( wingsVariations> 3){
             wingsVariations = 0f;
         }
-        birdGravityJump++;
+
+    }
+
+    private void verifyEstateOfGame() {
+        touchScreen = Gdx.input.isTouched();
+        if ( gameStatus == 0 ) {
+            gameWaiting();
+        } else  if ( gameStatus == 1 ) {
+            gameStart();
+        } else if ( gameStatus == 2 ) {
+            gameOverRestartGame();
+        }
+    }
+
+    private void gameStart() {
+        if ( touchScreen ) {
+            // Gdx.app.log("touch", "Tela tocada");
+            birdGravity= Constants.BIRD_JUMP_SIZE;
+            gameStatus = 1;
+            soundFlying.play();
+        }
+
+        pipePositionHorizontal -= Gdx.graphics.getDeltaTime() * Constants.PIPES_WIDTH_SPEED;
+        if ( pipePositionHorizontal < -pipeTop.getWidth() ) {
+            pipePositionHorizontal = widthDisplay;
+            pipePositionVertical = random.nextInt( Constants.PIPES_MAX_SIZE ) - Constants.PIPE_RANDOM_SIZE ;
+            Gdx.app.log("random", "Valor aleatorio: " + pipePositionVertical);
+            passPipe = false;
+
+        }
+
+        if ( birdInitialVerticalPosition > 0 || touchScreen ) {
+            birdInitialVerticalPosition = birdInitialVerticalPosition - birdGravity;
+        }
+
+        birdGravity++;
+    }
+
+    private void gameWaiting() {
+        if ( touchScreen ) {
+            // Gdx.app.log("touch", "Tela tocada");
+            birdGravity= Constants.BIRD_JUMP_SIZE;
+            gameStatus = 1;
+            soundFlying.play();
+        }
+    }
+
+    private void gameOverRestartGame() {
+
+        if ( birdInitialVerticalPosition > 0 || touchScreen ) {
+            birdInitialVerticalPosition = birdInitialVerticalPosition - birdGravity;
+           // birdGravity++;
+        }
+
+
+        if ( touchScreen ) {
+            gameStatus = 0;
+            score = 0;
+            birdGravity = 0f;
+            birdInitialVerticalPosition = heightDisplay / 2f;
+            pipePositionHorizontal = widthDisplay;
+        }
     }
 
     private void drawTexture() {
@@ -196,8 +274,19 @@ public class FlappyBirdActivity extends ApplicationAdapter {
             pipeBottom,
             pipePositionHorizontal,
             heightDisplay / 2f - pipeBottom.getHeight() - pipesMargin/ 2f + pipePositionVertical);
-        textSoreResult.draw(batch, "Pontos: " + score , widthDisplay / 2f - 200f, heightDisplay - 200f
+        textScoreResult.draw(batch, "Pontos: " + score , widthDisplay / 2f - 200f, heightDisplay - 200f
         );
+
+        if ( gameStatus == 2 ){
+            batch.draw(gameOver, widthDisplay / 2f - gameOver.getWidth() / 2f,
+                heightDisplay / 2f - gameOver.getHeight() / 2f);
+
+            textGameRestart.draw(batch, "Toque para reiniciar", widthDisplay / 2f - 200f,
+                heightDisplay / 2f - gameOver.getHeight() / 2f - 200f);
+
+            textGameOverScoreResult.draw(batch, "A melhor pontução: " + score + " pontos", widthDisplay / 2f - 190f,
+                heightDisplay / 2f - gameOver.getHeight() / 2f - 100f);
+        }
         batch.end();
 
     }
