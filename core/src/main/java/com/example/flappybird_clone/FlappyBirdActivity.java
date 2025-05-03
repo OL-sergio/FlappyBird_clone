@@ -44,6 +44,7 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     private int gameStatus = 0;
     private  boolean touchScreen;
     private boolean passPipe = false;
+
     private BitmapFont textScoreResult;
     private BitmapFont textGameOverRecordScore;
     private BitmapFont textGameRestart;
@@ -136,7 +137,6 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     public void render() {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BITS);
-        Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT | Gdx.gl.GL_DEPTH_BUFFER_BIT);
         int error = Gdx.gl.glGetError();
         if (error != GL20.GL_NO_ERROR) {
             Gdx.app.log("OpenGL Error", "Code: $error");
@@ -162,7 +162,7 @@ public class FlappyBirdActivity extends ApplicationAdapter {
 
         pipeBottomRectangle.set(
             pipePositionHorizontal,
-            heightDisplay / 2f - pipeBottomLongo.getHeight() / 2F - pipesMargin / 2f + pipePositionVertical,
+            heightDisplay / 2f - pipeBottomLongo.getHeight() - pipesMargin / 2f + pipePositionVertical,
             pipeBottomLongo.getWidth(), pipeBottomLongo.getHeight()
         );
 
@@ -184,19 +184,18 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         shapeRenderer.setColor(Color.RED);
 
         shapeRenderer.circle(50 + birds[0].getWidth() / 2f ,
-            birdInitialVerticalPosition + birds[0].getHeight() / 2f ,
-            birds[0].getWidth() / 2f
+            birdInitialVerticalPosition + birds[0].getHeight() / 2f , birds[0].getWidth() / 2f
         );
 
         shapeRenderer.rect(
             pipePositionHorizontal, heightDisplay / 2f + pipesMargin / 2f + pipePositionVertical,
-            pipeTop.getWidth(), pipeTop.getHeight()
+            pipeTopLongo.getWidth(), pipeTopLongo.getHeight()
         );
 
         shapeRenderer.rect(
             pipePositionHorizontal,
-            heightDisplay / 2f - pipeBottom.getHeight() - pipesMargin / 2f + pipePositionVertical,
-            pipeBottom.getWidth(), pipeBottom.getHeight()
+            heightDisplay / 2f - pipeBottomLongo.getHeight() - pipesMargin / 2f + pipePositionVertical,
+            pipeBottomLongo.getWidth(), pipeBottomLongo.getHeight()
         );
         shapeRenderer.end();*/
     }
@@ -222,8 +221,8 @@ public class FlappyBirdActivity extends ApplicationAdapter {
     }
 
     private void verifyEstateOfGame() {
-        touchScreen = Gdx.input.isTouched();
 
+        touchScreen = Gdx.input.isTouched();
         if (gameStatus == 0 ){
             gameMenu();
         } else if ( gameStatus == 1 ) {
@@ -233,6 +232,7 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         } else if ( gameStatus == 3 ) {
             gameOverRestartGame();
         }
+
     }
 
     private void gameMenu() {
@@ -241,18 +241,13 @@ public class FlappyBirdActivity extends ApplicationAdapter {
             gameStatus = 1;
             soundFlying.play();
         }
-
-        if ( birdInitialVerticalPosition > 0 || touchScreen ) {
-            birdInitialVerticalPosition = birdInitialVerticalPosition ;
-        }
-
     }
 
 
     private void gameWaiting() {
         if ( touchScreen ) {
             // Gdx.app.log("touch", "Tela tocada");
-            birdGravity= Constants.BIRD_JUMP_SIZE;
+            birdGravity = Constants.BIRD_JUMP_SIZE;
             gameStatus = 2;
             soundFlying.play();
         }
@@ -319,7 +314,7 @@ public class FlappyBirdActivity extends ApplicationAdapter {
         batch.begin();
 
         batch.draw( background, 0f, 0f, widthDisplay, heightDisplay);
-        batch.draw( birds[ (int) wingsVariations], 50f + birdInitialHorizontalPosition, birdInitialVerticalPosition - Constants.BIRD_START_POSITION );
+        batch.draw( birds[ (int) wingsVariations ], 50f, birdInitialVerticalPosition );
 
         batch.draw(
             pipeTopLongo,
