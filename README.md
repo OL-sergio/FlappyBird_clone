@@ -27,32 +27,54 @@ This project is a clone of the famous Flappy Bird game, developed for the Androi
 
 ```
 
-FlappyBird_clone/
+lappyBird_clone/
 ├── android/
 │   ├── AndroidManifest.xml       // Android application manifest file
 │   ├── build.gradle              // Gradle build file for the Android module
+│   ├── ic_launcher-playstore.png // Icon for the Google Play Store
+│   ├── ic_launcher-web.png       // Icon for web deployment (if applicable)
 │   ├── proguard-rules.pro        // ProGuard rules for code shrinking and obfuscation
 │   ├── project.properties        // Project-specific properties
 │   ├── res/                      // Resources directory
-│   │   ├── mipmap-anydpi-v26/    // Adaptive launcher icons
+│   │   ├── mipmap-anydpi-v26/    // Adaptive launcher icons (adaptive icons)
+│   │   │   ├── ic_launcher_round.xml   // Round adaptive icon
+│   │   │   └── ic_launcher.xml        // Standard adaptive icon
 │   │   ├── mipmap-hdpi/          // Launcher icons for high-density screens
+│   │   │   ├── ic_launcher_foreground.webp // Foreground layer for adaptive icon (hdpi)
+│   │   │   ├── ic_launcher_round.webp    // Round launcher icon (hdpi)
+│   │   │   └── ic_launcher.webp         // Standard launcher icon (hdpi)
 │   │   ├── mipmap-mdpi/          // Launcher icons for medium-density screens
+│   │   │   ├── ic_launcher_foreground.webp // Foreground layer for adaptive icon (mdpi)
+│   │   │   ├── ic_launcher_round.webp    // Round launcher icon (mdpi)
+│   │   │   └── ic_launcher.webp         // Standard launcher icon (mdpi)
 │   │   ├── mipmap-xhdpi/         // Launcher icons for extra-high-density screens
+│   │   │   ├── ic_launcher_foreground.webp // Foreground layer for adaptive icon (xhdpi)
+│   │   │   ├── ic_launcher_round.webp    // Round launcher icon (xhdpi)
+│   │   │   └── ic_launcher.webp         // Standard launcher icon (xhdpi)
 │   │   ├── mipmap-xxhdpi/        // Launcher icons for extra-extra-high-density screens
+│   │   │   ├── ic_launcher_foreground.webp // Foreground layer for adaptive icon (xxhdpi)
+│   │   │   ├── ic_launcher_round.webp    // Round launcher icon (xxhdpi)
+│   │   │   └── ic_launcher.webp         // Standard launcher icon (xxhdpi)
 │   │   └── mipmap-xxxhdpi/       // Launcher icons for extra-extra-extra-high-density screens
-│   │   └── values/               // Values directory
-│   │       ├── color.xml         // Color resources
-│   │       ├── strings.xml       // String resources
-│   │       └── styles.xml        // Style resources
-│   └── src/                      // Source code directory
+│   │   │   ├── ic_launcher_foreground.webp // Foreground layer for adaptive icon (xxxhdpi)
+│   │   │   ├── ic_launcher_round.webp    // Round launcher icon (xxxhdpi)
+│   │   │   └── ic_launcher.webp         // Standard launcher icon (xxxhdpi)
+│   │   └── values/              // Values directory
+│   │       ├── color.xml        // Color resources
+│   │       ├── ic_launcher_background.xml // Background for adaptive icons
+│   │       ├── strings.xml      // String resources
+│   │       └── styles.xml       // Style resources
+│   └── src/                     // Source code directory
 │       └── main/
 │           └── java/
 │               └── com/example/flappybird_clone/android/
-│                   └── AndroidLauncher.java  // Android launcher class
+│                   └── AndroidLauncher.java // Android launcher class
 ├── core/
-│   └── src/main/java/...       // Main game code
+│   └── src/main/java/com/example/flappybird_clone/
+│       ├── Constants.java       // Constant values used in the game
+│       └── FlappyBirdActivity.java// Main game logic
 └── assets/
-    └── ...                       // Game resources (images, sounds, etc.)
+    └── ...                      // Game resources (images, sounds, etc.)
 
 
 ```
