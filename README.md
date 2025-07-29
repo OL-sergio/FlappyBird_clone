@@ -1,32 +1,102 @@
-# Flappy Bird
+# FlappyBird Clone
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+![LibGDX](https://img.shields.io/badge/libGDX-E74A2B?style=for-the-badge&logo=libGDX&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)
+![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+## Project Description
 
-## Platforms
+This project is a clone of the famous Flappy Bird game, developed for the Android platform using the LibGDX framework. The main objective is to replicate the original gameplay, where the player controls a bird and must avoid obstacles (pipes) to achieve the highest possible score.
 
-- `core`: Main module with the application logic shared by all platforms.
-- `android`: Android mobile platform. Needs Android SDK.
+### Objectives
 
-## Gradle
+*   Recreate the Flappy Bird game mechanics.
+*   Use the LibGDX framework for cross-platform game development.
+*   Implement basic physics (gravity, collisions).
+*   Manage different game states (menu, game, game over).
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+## Technologies Used
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `android:lint`: performs Android project validation.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `test`: runs unit tests (if any).
+*   **Java**: Main programming language.
+*   **LibGDX**: Framework for 2D/3D game development.
+*   **Gradle**: Build automation system.
+*   **Android SDK**: Development kit for Android.
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+## Project Structure
+
+```
+
+FlappyBird_clone/
+├── android/
+│   ├── AndroidManifest.xml       // Android application manifest file
+│   ├── build.gradle              // Gradle build file for the Android module
+│   ├── proguard-rules.pro        // ProGuard rules for code shrinking and obfuscation
+│   ├── project.properties        // Project-specific properties
+│   ├── res/                      // Resources directory
+│   │   ├── mipmap-anydpi-v26/    // Adaptive launcher icons
+│   │   ├── mipmap-hdpi/          // Launcher icons for high-density screens
+│   │   ├── mipmap-mdpi/          // Launcher icons for medium-density screens
+│   │   ├── mipmap-xhdpi/         // Launcher icons for extra-high-density screens
+│   │   ├── mipmap-xxhdpi/        // Launcher icons for extra-extra-high-density screens
+│   │   └── mipmap-xxxhdpi/       // Launcher icons for extra-extra-extra-high-density screens
+│   │   └── values/               // Values directory
+│   │       ├── color.xml         // Color resources
+│   │       ├── strings.xml       // String resources
+│   │       └── styles.xml        // Style resources
+│   └── src/                      // Source code directory
+│       └── main/
+│           └── java/
+│               └── com/example/flappybird_clone/android/
+│                   └── AndroidLauncher.java  // Android launcher class
+├── core/
+│   └── src/main/java/...       // Main game code
+└── assets/
+    └── ...                       // Game resources (images, sounds, etc.)
+
+
+```
+
+## Functionalities by Class
+
+*   `AndroidLauncher.java`: Game initialization class on Android.
+*   `FlappyBird.java` (core): Main class that manages the game lifecycle and screens.
+*   `GameScreen.java` (core): Main game logic, including updating and rendering elements.
+*   `Bird.java` (core): Controls the bird's behavior (movement, collision).
+*   `Pipe.java` (core): Manages the creation and movement of pipes.
+*   `MenuScreen.java` (core): Initial game screen.
+
+## How to Run
+
+### On GitHub
+
+1.  Clone the repository:
+
+    ```bash
+    git clone <REPOSITORY_URL>
+    cd FlappyBird_clone
+    ```
+2.  Make your changes and submit:
+
+    ```bash
+    git add .
+    git commit -m "Your changes"
+    git push origin main
+    ```
+
+### On Android Studio
+
+1.  Open Android Studio.
+2.  Select "Open an Existing Project".
+3.  Navigate to the `FlappyBird_clone` folder and select it.
+4.  Wait for Gradle to sync.
+5.  Run the project on a connected Android emulator or device.
+
+To compile via terminal:
+
+```bash
+./gradlew android:assembleDebug
+```
+### Libraries and Frameworks
+- LibGDX: Game development framework that provides tools for rendering, audio, input, and other essential features. It abstracts the differences between platforms, allowing the same code to be run on multiple platforms with little or no modification.
+- Android SDK: Required to compile and run the game on Android devices. It provides the APIs and tools to interact with the Android operating system.
